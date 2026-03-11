@@ -14,7 +14,7 @@ class PlatController extends Controller
     public function index(Request $request)
     {
         //get all plats for the authenticated user
-        return response()->json($request->user()->plats()->with('category')->get());
+        return response()->json($request->user()->plats()->with('category')->get()); //eager loading (with)
     }
 
     /**
