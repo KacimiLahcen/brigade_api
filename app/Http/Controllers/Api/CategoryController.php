@@ -38,24 +38,29 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
-        //
+        return response()->json($category);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Category $category)
     {
-        //
+        $request->validate(['name' => 'required|string|max:255']);
+
+        $category->update($request->only('name'));
+
+        return response()->json(['message' => 'Updated w success', 'category' => $category]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        //
+        $category->delete();
+    return response()->json(['message' => ' deleted successfully']);
     }
 }
