@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class CategoryController extends Controller
 {
+    use AuthorizesRequests;
+    
     /**
      * Display a listing of the resource.
      */
@@ -48,11 +51,13 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
+        $this->authorize('update', $category); // own check 
+        
         $request->validate(['name' => 'required|string|max:255']);
 
         $category->update($request->only('name'));
 
-        return response()->json(['message' => 'Updated w success', 'category' => $category]);
+        return response()->json($category);
     }
 
     /**
@@ -60,6 +65,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $this->authorize('delete', $category);
+
         $category->delete();
     return response()->json(['message' => ' deleted successfully']);
     }

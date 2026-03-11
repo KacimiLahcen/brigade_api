@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Plat;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PlatController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
@@ -47,6 +50,8 @@ class PlatController extends Controller
      */
     public function update(Request $request, Plat $plat)
     {
+        $this->authorize('update', $plat);
+
         $fields = $request->validate([
             'title' => 'string',
             'price' => 'numeric',
@@ -62,6 +67,8 @@ class PlatController extends Controller
      */
     public function destroy(Plat $plat)
     {
+        $this->authorize('delete', $plat);
+        
         $plat->delete();
         return response()->json(['message' => ' Plat deleted']);
     }
