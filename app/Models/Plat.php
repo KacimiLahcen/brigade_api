@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Plat extends Model
 {
 
-    protected $fillable = ['title', 'description', 'price', 'category_id', 'user_id'];
+    protected $fillable = ['name', 'description', 'price', 'category_id', 'user_id', 'image'];
 
     public function category()
     {

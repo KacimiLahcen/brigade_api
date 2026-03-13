@@ -26,11 +26,17 @@ class PlatController extends Controller
     public function store(Request $request)
     {
         $fields = $request->validate([
-            'title' => 'required|string',
+            'name' => 'required|string',
             'description' => 'nullable|string',
             'price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable'
         ]);
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('plats', 'public');
+            $fields['image'] = $path;
+        }
 
         $plat = $request->user()->plats()->create($fields);
 
@@ -68,7 +74,7 @@ class PlatController extends Controller
     public function destroy(Plat $plat)
     {
         $this->authorize('delete', $plat);
-        
+
         $plat->delete();
         return response()->json(['message' => ' Plat deleted']);
     }
