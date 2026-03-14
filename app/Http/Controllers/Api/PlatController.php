@@ -59,7 +59,7 @@ class PlatController extends Controller
         $this->authorize('update', $plat);
 
         $fields = $request->validate([
-            'title' => 'string',
+            'name' => 'string',
             'price' => 'numeric',
             'category_id' => 'exists:categories,id'
         ]);
