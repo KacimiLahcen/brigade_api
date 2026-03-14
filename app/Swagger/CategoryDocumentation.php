@@ -5,7 +5,8 @@ namespace App\Swagger;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: "Categories", description: "Operations related to Categories")]
-class CategoryDocumentation {
+class CategoryDocumentation
+{
 
     #[OA\Get(
         path: "/api/categories",
@@ -29,7 +30,7 @@ class CategoryDocumentation {
 
 
 
-    
+
 
     #[OA\Post(
         path: "/api/categories",
