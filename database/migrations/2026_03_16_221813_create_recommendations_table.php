@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('recommendations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('plate_id')->constrained()->onDelete('cascade');
+            $table->foreignId('plate_id')->constrained('')->onDelete('cascade');
             $table->integer('score')->nullable();
             $table->string('status')->default('processing'); // processing or ready
             $table->text('warning_message')->nullable();
