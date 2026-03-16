@@ -11,7 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('plate_ingredient', function (Blueprint $table) {
+
+            $table->foreignId('plate_id')->constrained()->onDelete('cascade');
+            $table->foreignId('ingredient_id')->constrained()->onDelete('cascade');
+        });
     }
 
     /**
