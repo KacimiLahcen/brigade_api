@@ -13,4 +13,7 @@ class Ingredient extends Model
     'tags' => 'array', // to compare later with dietary_tags 
 ];
 
+public function plates() {
+    return $this->belongsToMany(Plat::class);
+}
 }
