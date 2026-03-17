@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('is_available')->default(true);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-        });
+        }); 
     }
 
     /**

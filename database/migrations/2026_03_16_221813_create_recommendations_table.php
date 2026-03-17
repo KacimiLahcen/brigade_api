@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('plate_id')->constrained('plats')->onDelete('cascade');
             $table->integer('score')->nullable();
+            $table->string('label')->nullable();
             $table->string('status')->default('processing'); // processing or ready
             $table->text('warning_message')->nullable();
             $table->timestamps();
