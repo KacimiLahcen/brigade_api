@@ -10,10 +10,11 @@ class Ingredient extends Model
 
 
     protected $casts = [
-    'tags' => 'array', // to compare later with dietary_tags 
-];
+        'tags' => 'array', // to compare later with dietary_tags 
+    ];
 
-public function plates() {
-    return $this->belongsToMany(Plat::class);
-}
+    public function plates()
+    {
+        return $this->belongsToMany(Plat::class);
+    }
 }

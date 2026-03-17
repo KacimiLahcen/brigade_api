@@ -14,15 +14,17 @@ class Plat extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function ingredients() {
-    return $this->belongsToMany(Ingredient::class);
-}
+    public function ingredients()
+    {
+        return $this->belongsToMany(Ingredient::class);
+    }
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public function recommendations() {
-    return $this->hasMany(Recommendations::class);
-}
+    public function recommendations()
+    {
+        return $this->hasMany(Recommendations::class);
+    }
 }
