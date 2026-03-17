@@ -20,8 +20,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password', 
-        'role', 
+        'password',
+        'role',
         'dietary_tags'
     ];
 
@@ -60,5 +60,10 @@ class User extends Authenticatable
     public function plats()
     {
         return $this->hasMany(Plat::class);
+    }
+
+    public function recommendations()
+    {
+        return $this->hasMany(Recommendations::class);
     }
 }
