@@ -22,4 +22,7 @@ class Plat extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function recommendations() {
+    return $this->hasMany(Recommendation::class);
+}
 }
