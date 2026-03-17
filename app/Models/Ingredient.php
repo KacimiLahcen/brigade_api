@@ -7,4 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Ingredient extends Model
 {
     protected $fillable = ['name', 'tags'];
+
+
+    protected $casts = [
+    'tags' => 'array', // to compare later with dietary_tags 
+];
+
 }
