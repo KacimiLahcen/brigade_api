@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Recommendations extends Model
 {
-    //
+    protected $fillable = ['user_id', 'plate_id', 'score', 'label', 'status', 'warning_message'];
+    
 }
