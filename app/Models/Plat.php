@@ -7,12 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Plat extends Model
 {
 
-    protected $fillable = ['name', 'description', 'price', 'category_id', 'user_id', 'image'];
+    protected $fillable = ['name', 'description', 'price', 'category_id', 'user_id', 'image', 'is_available'];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function ingredients() {
+    return $this->belongsToMany(Ingredient::class);
+}
 
     public function user()
     {
