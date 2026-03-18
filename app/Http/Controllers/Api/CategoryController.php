@@ -71,11 +71,17 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        $this->authorize('delete', $category);
+        $category = Category::findOrFail($id);
+
+        if ($category->plates()->where('is_available', true)->exists()) {
+            return response()->json([
+                'message' => 'Impossible de supprimer catégorie avec des plats actifs.'
+            ], 422);
+        }
 
         $category->delete();
-        return response()->json(['message' => ' deleted successfully']);
+        return response()->json(['message' => 'deleted with success']);
     }
 }
