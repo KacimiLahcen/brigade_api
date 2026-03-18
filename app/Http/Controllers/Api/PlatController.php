@@ -14,68 +14,95 @@ class PlatController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        //get all plats for the authenticated user
-        return response()->json($request->user()->plats()->with('category')->get()); //eager loading (with)
+        $plates = Plat::with(['category', 'ingredients'])
+            ->where('is_available', true)
+            ->get();
+            
+        return response()->json($plates);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+   public function store(Request $request)
     {
-        $fields = $request->validate([
-            'name' => 'required|string',
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
             'description' => 'nullable|string',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'is_available' => 'boolean',
+            'ingredient_ids' => 'required|array', 
+            'ingredient_ids.*' => 'exists:ingredients,id'
         ]);
 
+        
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('plats', 'public');
-            $fields['image'] = $path;
+            $validated['image'] = $request->file('image')->store('plates', 'public');
         }
 
-        $plat = $request->user()->plats()->create($fields);
+        $plate = Plat::create($validated);
 
-        return response()->json($plat, 201);
+        $plate->ingredients()->sync($request->ingredient_ids);
+
+        return response()->json($plate->load('ingredients'), 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Plat $plat)
+    public function show($id)
     {
-        return response()->json($plat->load('category'));
+        $plate = Plate::with(['category', 'ingredients'])->findOrFail($id);
+        return response()->json($plate);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Plat $plat)
+    public function update(Request $request, $id)
     {
-        $this->authorize('update', $plat);
+        $plate = Plat::findOrFail($id);
 
-        $fields = $request->validate([
-            'name' => 'string',
-            'price' => 'numeric',
-            'category_id' => 'exists:categories,id'
+        $validated = $request->validate([
+            'name' => 'string|max:100',
+            'price' => 'numeric|min:0',
+            'category_id' => 'exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'is_available' => 'boolean',
+            'ingredient_ids' => 'array',
+            'ingredient_ids.*' => 'exists:ingredients,id'
         ]);
 
-        $plat->update($fields);
-        return response()->json($plat);
+        if ($request->hasFile('image')) {
+            if ($plate->image) {
+                Storage::disk('public')->delete($plate->image);
+            }
+            $validated['image'] = $request->file('image')->store('plates', 'public');
+        }
+
+        $plate->update($validated);
+
+        if ($request->has('ingredient_ids')) {
+            $plate->ingredients()->sync($request->ingredient_ids);
+        }
+
+        return response()->json($plate->load('ingredients'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Plat $plat)
+    public function destroy($id)
     {
-        $this->authorize('delete', $plat);
-
-        $plat->delete();
-        return response()->json(['message' => ' Plat deleted']);
+        $plate = Plat::findOrFail($id);
+        if ($plate->image) {
+            Storage::disk('public')->delete($plate->image);
+        }
+        $plate->delete();
+        return response()->json(['message' => 'Plat supprimé avec succès']);
     }
 }
