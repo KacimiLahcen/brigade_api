@@ -16,7 +16,12 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        return response()->json($request->user()->categories);
+        $query = Category::query();
+
+        if ($request->query('active') === 'false') {
+            return response()->json($query->get());
+        }
+        return response()->json($query->where('is_active', true)->get());
     }
 
     /**
