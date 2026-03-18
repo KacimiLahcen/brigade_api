@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class CategoryController extends Controller
 {
     use AuthorizesRequests;
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -53,14 +53,18 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
-        $this->authorize('update', $category); // own check 
-        
-        $request->validate(['name' => 'required|string|max:255']);
+        $category = Category::findOrFail($id);
 
-        $category->update($request->only('name'));
+        $validated = $request->validate([
+            'name' => 'string|max:100|unique:categories,name,' . $id,
+            'description' => 'nullable|string',
+            'color' => 'nullable|string',
+            'is_active' => 'boolean'
+        ]);
 
+        $category->update($validated);
         return response()->json($category);
     }
 
@@ -72,6 +76,6 @@ class CategoryController extends Controller
         $this->authorize('delete', $category);
 
         $category->delete();
-    return response()->json(['message' => ' deleted successfully']);
+        return response()->json(['message' => ' deleted successfully']);
     }
 }
