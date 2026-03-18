@@ -34,5 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
     });
     
-    Route::apiResource('plats', PlatController::class);
+    Route::get('/plates', [PlatController::class, 'index']);
+    Route::get('/plates/{id}', [PlatController::class, 'show']);
+
+    Route::middleware('admin')->group(function () {
+        Route::post('/plates', [PlatController::class, 'store']);
+        Route::post('/plates/{id}', [PlatController::class, 'update']); 
+        Route::delete('/plates/{id}', [PlatController::class, 'destroy']);
+    });
 });
