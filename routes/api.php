@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PlatController;
+use App\Http\Controllers\Api\IngredientController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -41,5 +42,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/plates', [PlatController::class, 'store']);
         Route::post('/plates/{id}', [PlatController::class, 'update']); 
         Route::delete('/plates/{id}', [PlatController::class, 'destroy']);
+
+            Route::apiResource('ingredients', IngredientController::class);
+
     });
+
 });
