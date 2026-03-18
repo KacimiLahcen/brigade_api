@@ -84,4 +84,11 @@ class CategoryController extends Controller
         $category->delete();
         return response()->json(['message' => 'deleted with success']);
     }
+
+    public function getPlates($id)
+    {
+        $category = Category::findOrFail($id);
+        $plates = $category->plates()->where('is_available', true)->get();
+        return response()->json($plates);
+    }
 }
