@@ -14,38 +14,43 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $fields = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed'
+            'name' => 'required|string|max:100',
+            'email' => 'required|string|unique:users | email',
+            'password' => 'required|string|min:8',
+            'role' => 'required|in:admin,client',
+            'dietary_tags' => 'nullable|array'
         ]);
 
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
-            'password' => bcrypt($fields['password'])
+            'password' => bcrypt($fields['password']),
+            'role' => $fields['role'],
+            'dietary_tags' => $fields['dietary_tags'] ?? [], // nullable
         ]);
 
         $token = $user->createToken('brigade_token')->plainTextToken;
 
-        return response([
+        return response()->json([
             'user' => $user,
-            'token' => $token
+            'access_token' => $token,
+            'token_type' => 'Bearer',
         ], 201);
     }
 
     // log
     public function login(Request $request)
     {
-        $fields = $request->validate([
+        $request->validate([
             'email' => 'required|string',
-            'password' => 'required|string'
+            'password' => 'required'
         ]);
 
         // check email
-        $user = User::where('email', $fields['email'])->first();
+        $user = User::where('email', $request['email'])->first();
 
         //verify passcode
-        if(!$user || !Hash::check($fields['password'], $user->password)) {
+        if(!$user || !Hash::check($request['password'], $user->password)) {
             return response(['message' => ' email or password incorrect'], 401);
         }
 
@@ -53,7 +58,8 @@ class AuthController extends Controller
 
         return response([
             'user' => $user,
-            'token' => $token
+            'access_token' => $token,
+            'token_type' => 'Bearer'
         ], 200);
     }
 
