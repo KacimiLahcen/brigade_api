@@ -15,7 +15,7 @@ class AuthController extends Controller
     {
         $fields = $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|string|unique:users | email',
+            'email' => 'required|string|unique:users|email',
             'password' => 'required|string|min:8',
             'role' => 'required|in:admin,client',
             'dietary_tags' => 'nullable|array'

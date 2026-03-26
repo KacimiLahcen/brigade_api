@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Plat;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Storage;
 
 class PlatController extends Controller
 {
@@ -44,6 +45,7 @@ class PlatController extends Controller
             $validated['image'] = $request->file('image')->store('plates', 'public');
         }
 
+        unset($validated['ingredient_ids']);
         $plate = Plat::create($validated);
 
         $plate->ingredients()->sync($request->ingredient_ids);
@@ -84,6 +86,7 @@ class PlatController extends Controller
             $validated['image'] = $request->file('image')->store('plates', 'public');
         }
 
+        unset($validated['ingredient_ids']);
         $plate->update($validated);
 
         if ($request->has('ingredient_ids')) {

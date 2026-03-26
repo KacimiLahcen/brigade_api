@@ -36,7 +36,7 @@ class CategoryController extends Controller
             'is_active' => 'boolean'
         ]);
 
-        $category = Category::create($request);
+        $category = Category::create($request->validated());
 
         return response()->json($category, 201);
     }
@@ -75,7 +75,7 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-        if ($category->plates()->where('is_available', true)->exists()) {
+        if ($category->plats()->where('is_available', true)->exists()) {
             return response()->json([
                 'message' => 'Impossible de supprimer catégorie avec des plats actifs.'
             ], 422);
@@ -88,7 +88,7 @@ class CategoryController extends Controller
     public function getPlates($id)
     {
         $category = Category::findOrFail($id);
-        $plates = $category->plates()->where('is_available', true)->get();
+        $plates = $category->plats()->where('is_available', true)->get();
         return response()->json($plates);
     }
 }

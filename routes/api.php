@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PlatController;
 use App\Http\Controllers\Api\IngredientController;
+use App\Http\Controllers\Api\RecommendationsController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -29,23 +30,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories/{id}', [CategoryController::class, 'show']);
     Route::get('/categories/{id}/plates', [CategoryController::class, 'getPlates']);
 
-    Route::middleware('admin')->group(function () {
-    Route::post('/categories', [CategoryController::class, 'store']);
-    Route::put('/categories/{id}', [CategoryController::class, 'update']);
-    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-    });
-    
     Route::get('/plates', [PlatController::class, 'index']);
     Route::get('/plates/{id}', [PlatController::class, 'show']);
 
+    Route::post('/recommendations/analyze/{plate_id}', [RecommendationsController::class, 'analyze']);
+    Route::get('/recommendations', [RecommendationsController::class, 'index']);
+
+
     Route::middleware('admin')->group(function () {
+        Route::post('/categories', [CategoryController::class, 'store']);
+        Route::put('/categories/{id}', [CategoryController::class, 'update']);
+        Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+
         Route::post('/plates', [PlatController::class, 'store']);
-        Route::post('/plates/{id}', [PlatController::class, 'update']); 
+        Route::post('/plates/{id}', [PlatController::class, 'update']);
         Route::delete('/plates/{id}', [PlatController::class, 'destroy']);
 
-            Route::apiResource('ingredients', IngredientController::class);
-
+        Route::apiResource('ingredients', IngredientController::class);
     });
-
-    
 });

@@ -15,6 +15,6 @@ class Ingredient extends Model
 
     public function plates()
     {
-        return $this->belongsToMany(Plat::class);
+        return $this->belongsToMany(Plat::class, 'plate_ingredients', 'ingredient_id', 'plate_id');
     }
 }

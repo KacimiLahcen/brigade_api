@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Plat;
 use App\Models\Recommendations;
 use App\Jobs\AnalyzeCompatibilityJob;
 use Illuminate\Http\Request;
 
-class RecommendationController extends Controller
+class RecommendationsController extends Controller
 {
     
     // POST /api/recommendations/analyze/{plate_id}

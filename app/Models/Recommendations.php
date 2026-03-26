@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Plat;
+use App\Models\User;
 
 class Recommendations extends Model
 {
