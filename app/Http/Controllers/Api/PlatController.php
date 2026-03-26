@@ -56,7 +56,7 @@ class PlatController extends Controller
      */
     public function show($id)
     {
-        $plate = Plate::with(['category', 'ingredients'])->findOrFail($id);
+        $plate = Plat::with(['category', 'ingredients'])->findOrFail($id);
         return response()->json($plate);
     }
 
