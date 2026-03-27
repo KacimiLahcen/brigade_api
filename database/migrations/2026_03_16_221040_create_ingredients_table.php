@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ingredients', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->json('tags'); // contains_meat, contains_gluten, etc.
+            $table->json('tags'); // contains_meat, contains_gluten, etc...
             $table->timestamps();
         });
     }

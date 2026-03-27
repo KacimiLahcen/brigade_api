@@ -29,14 +29,14 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories',
             'description' => 'nullable|string',
-            'color' => 'nullable|string',
+            'color' => 'nullable',
             'is_active' => 'boolean'
         ]);
 
-        $category = Category::create($request->validated());
+        $category = Category::create(array_merge($validated, ['user_id' => $request->user()->id]));
 
         return response()->json($category, 201);
     }
@@ -60,7 +60,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'string|max:100|unique:categories,name,' . $id,
             'description' => 'nullable|string',
-            'color' => 'nullable|string',
+            'color' => 'nullable',
             'is_active' => 'boolean'
         ]);
 

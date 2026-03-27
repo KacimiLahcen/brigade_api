@@ -4,18 +4,17 @@ namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Models\Recommendations;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use App\Models\Recommendations;
+use App\Services\GroqService;
 
 class AnalyzeCompatibilityJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     */
     protected $recommendation;
 
     public function __construct(Recommendations $recommendation)
@@ -23,42 +22,39 @@ class AnalyzeCompatibilityJob implements ShouldQueue
         $this->recommendation = $recommendation;
     }
 
-    /**
-     * Execute the job.
-     */
-    public function handle()
+    public function handle(GroqService $groq): void
     {
-
-        $user = $this->recommendation->user;
+        $user  = $this->recommendation->user;
         $plate = $this->recommendation->plate->load('ingredients');
 
-        $userTags = $user->dietary_tags ?? []; // like:: ["vegan", "no_sugar"]
-        $score = 100;
-        $warnings = [];
+        $dietaryTags = $user->dietary_tags ?? [];
 
-        foreach ($plate->ingredients as $ingredient) {
-            $ingTags = $ingredient->tags ?? []; // ecxmple ["contains_meat"]
+        // collect all ingredient tags as a flat array
+        $ingredientTags = $plate->ingredients
+            ->pluck('tags')
+            ->flatten()
+            ->unique()
+            ->values()
+            ->toArray();
 
-            //comparing logic
-            if (in_array('vegan', $userTags) && in_array('contains_meat', $ingTags)) {
-                $score -= 50;
-                $warnings[] = "Contient de la viande (incompatible avec Vegan)";
-            }
-            if (in_array('no_sugar', $userTags) && in_array('contains_sugar', $ingTags)) {
-                $score -= 30;
-                $warnings[] = "Contient du sucre";
-            }
+        try {
+            $result = $groq->analyzeDish($dietaryTags, $plate->name, $ingredientTags);
+
+            $this->recommendation->update([
+                'score'           => $result['score'],
+                'label'           => $result['label'],
+                'status'          => 'ready',
+                'warning_message' => $result['warning_message'],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('AnalyzeCompatibilityJob failed: ' . $e->getMessage());
+
+            $this->recommendation->update([
+                'status'          => 'ready',
+                'score'           => 50,
+                'label'           => '🟡 Recommended with notes',
+                'warning_message' => null,
+            ]);
         }
-        $label = 'Not Recommended';
-        if ($score >= 80) $label = 'Highly Recommended';
-        elseif ($score >= 50) $label = 'Recommended';
-
-
-        $this->recommendation->update([
-            'score' => max(0, $score),
-            'label' => $label,
-            'status' => 'ready',
-            'warning_message' => implode(', ', $warnings)
-        ]);
     }
 }
