@@ -40,6 +40,10 @@ class PlatController extends Controller
             'ingredient_ids.*' => 'exists:ingredients,id'
         ]);
 
+        $validated['user_id'] = $request->user()->id; 
+
+        // $plate = Plat::create($validated);
+
         
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('plates', 'public');
@@ -72,6 +76,7 @@ class PlatController extends Controller
         $validated = $request->validate([
             'name' => 'string|max:100',
             'price' => 'numeric|min:0',
+            'user_id' => 'numeric',
             'category_id' => 'exists:categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'is_available' => 'boolean',
